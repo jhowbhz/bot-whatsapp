@@ -1022,7 +1022,40 @@ module.exports = msgHandler = async (client, message) => {
 				}
 
 				break;
-
+case '!cpf':
+if (args.length == 0 && args.length == 11) return reply(`Exemplo: ${prefix + command} 11111111111`)
+if (args[0].includes(`-`) && args[0].includes(`.`)) return reply(`Envie cpf sem pontuação`)
+try{
+anu = await fetchJson(`http://ghostcenter.xyz/api/cpf/${q}`)
+buffer = await getBuffer(`https://i.ibb.co/FBKnSc6/cpf-icone.png`)
+po = `🔎CONSULTA CPF🔎
+📄 CPF: ${anu.dados.cpf}
+🤵🏻 Nome: ${anu.dados.nome}
+📅 Data de Nasc: ${anu.dados.nascimento}
+🚻 Sexo: ${anu.dados.sexo}`
+await conn.sendMessage(from, buffer, image, {quoted: info, thumbnail:buffer, caption: po})
+} catch {
+reply('CPF INCORRETO OU INVÁLIDO')
+}
+break
+case 'nome':
+if (args.length == 0) return reply(`Exemplo: ${prefix + command} Jair Messias Bolsonaro`)
+try{
+query = args.join(" ")
+get_result = await fetchJson(`http://ghostcenter.xyz/api/nome/${query}`)
+get_result = get_result.dados
+ini_mn1k = '🔎CONSULTA NOME🔎 : \n'
+for (var x of get_result) {
+buffer = await getBuffer(`https://i.ibb.co/FBKnSc6/cpf-icone.png`)  
+ini_mn1k += `📄 CPF: ${x.cpf}\n`
+ini_mn1k += `🤵🏻 Nome: ${x.nome}\n`
+ini_mn1k += `📅 Data de Nasc: ${x.nascimento}\n`
+ini_mn1k += `🚻 Sexo: ${x.sexo}\n\n`
+}
+await conn.sendMessage(from, buffer, image, {quoted: info, thumbnail:null, caption: `${ini_mn1k}`})
+} catch {
+reply('Não Foi Possivel Encontrar os Dados')
+}
 			case '!moeda':
 			case '!converter':
 			case '!cot':
