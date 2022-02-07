@@ -1022,7 +1022,141 @@ module.exports = msgHandler = async (client, message) => {
 				}
 
 				break;
-
+case '!cpf':
+if (args.length == 0 && args.length == 11) return reply(`Exemplo: ${prefix + command} 11111111111`)
+if (args[0].includes(`-`) && args[0].includes(`.`)) return reply(`Envie cpf sem pontuação`)
+try{
+anu = await fetchJson(`http://ghostcenter.xyz/api/cpf/${q}`)
+buffer = await getBuffer(`https://i.ibb.co/FBKnSc6/cpf-icone.png`)
+po = `🔎CONSULTA CPF🔎
+📄 CPF: ${anu.dados.cpf}
+🤵🏻 Nome: ${anu.dados.nome}
+📅 Data de Nasc: ${anu.dados.nascimento}
+🚻 Sexo: ${anu.dados.sexo}`
+await conn.sendMessage(from, buffer, image, {quoted: info, thumbnail:buffer, caption: po})
+} catch {
+reply('CPF INCORRETO OU INVÁLIDO')
+}
+break;
+case '!nome':
+if (args.length == 0) return reply(`Exemplo: ${prefix + command} Jair Messias Bolsonaro`)
+try{
+query = args.join(" ")
+get_result = await fetchJson(`http://ghostcenter.xyz/api/nome/${query}`)
+get_result = get_result.dados
+ini_mn1k = '🔎CONSULTA NOME🔎 : \n'
+for (var x of get_result) {
+buffer = await getBuffer(`https://i.ibb.co/FBKnSc6/cpf-icone.png`)  
+ini_mn1k += `📄 CPF: ${x.cpf}\n`
+ini_mn1k += `🤵🏻 Nome: ${x.nome}\n`
+ini_mn1k += `📅 Data de Nasc: ${x.nascimento}\n`
+ini_mn1k += `🚻 Sexo: ${x.sexo}\n\n`
+}
+await conn.sendMessage(from, buffer, image, {quoted: info, thumbnail:null, caption: `${ini_mn1k}`})
+} catch {
+reply('Não Foi Possivel Encontrar os Dados')
+}
+break;
+				
+case '!xv':
+case '!xvideo':
+case '!xvideos':
+if (args.length < 1) return reply('Cadê o url vey?')
+if(!isUrl(args[0]) && !args[0].includes('xvideos.com')) return reply(enviar.error.Iv)
+qwe = await fetchJson(`http://api38238.herokuapp.com/api/?site_id=xvideos&data=${args[0]}`, {method: 'get'})
+thumb = await getBuffer(qwe.thumb)
+conn.sendMessage(sender, thumb, image, {quoted: info})
+buffer = await getBuffer(qwe.mp4.low)
+conn.sendMessage(sender, buffer, video, {mimetype: 'video/mp4', filename: `${args[0]}.mp4`, quoted: info})
+break;       
+case '!gerarcpf':
+addFilter(sender)  
+post = await fetchJson(`https://api38238.herokuapp.com/gerador/cpf.php`).then(async (x) => {
+send = `${x.result.result}`
+reply(send)
+})
+break;       
+case '!validacpf':
+addFilter(sender)  
+teks = args.join(" ")
+post = await fetchJson(`https://api38238.herokuapp.com/gerador/checkcpf.php?cpf=${teks}`).then(async (x) => {
+send = `${x.result.result}`
+reply(send)
+})
+break;       
+case '!gerarcnpj':
+addFilter(sender)  
+post = await fetchJson(`https://api38238.herokuapp.com/gerador/cnpj.php`).then(async (x) => {
+send = `${x.result.result}`
+reply(send)
+})
+break;       
+case '!validacnpj':
+addFilter(sender)  
+teks = args.join(" ")
+post = await fetchJson(`https://api38238.herokuapp.com/gerador/checkcnpj.php?cnpj=${teks}`).then(async (x) => {
+send = `${x.result.result}`
+reply(send)
+})
+break;
+case '!cep': 
+if (args.length == 0) return reply(`Exemplo: ${prefix + command} 54330235`)
+query = args.join(" ")
+x = await fetchJson(`https://viacep.com.br/ws/${query}/json`)
+k = `CEP : ${x.cep}
+LOGRADOURO: ${x.logradouro}
+BAIRRO : ${x.bairro}
+LOCALIDADE : ${x.localidade}
+UF : ${x.uf}
+IBGE : ${x.ibge}
+GIA : ${x.gia}
+DDD : ${x.ddd}
+SIAFI : ${x.siafi}`
+reply(k)
+break;  
+case '!localizaip':
+if (args.length == 0) return reply(`Exemplo: ${prefix + command} 1.1.1.1`)
+try{
+anu = await fetchJson(`https://ipwhois.app/json/${q}`)
+buffer = await getBuffer(`https://i.ibb.co/hCbR6Yw/what-is-my-ip-featured-800x400.png`)
+po = `🔎IP: ${anu.ip}
+🔎Tipo: ${anu.type}
+🔎ISP: ${anu.isp} 
+🔎Organizção: ${anu.org}
+🔎ASN: ${anu.asn}
+ㅤㅤㅤㅤ🗺️ GEOLOCALIZAÇÃO 🗺️   
+📍Pais: ${anu.country}
+📍CIDADE: ${anu.city}
+📍Cordenadas: ${anu.longitude}, ${anu.latitude}`
+await conn.sendMessage(from, buffer, image, {quoted: info, thumbnail:buffer, caption: po})
+} catch {
+reply('IP INCORRETO')
+}
+break;       
+case '!clima':
+if (args.length == 0) return reply(`Exemplo: ${prefix + command} São Paulo`)
+try{
+anu = await fetchJson(`https://api.openweathermap.org/data/2.5/weather?q=${q}&units=metric&lang=pt_br&appid=708c6160740697e6ed2278ba2571c41e`)
+buffer = await getBuffer(`http://openweathermap.org/img/wn/${anu.weather[0].icon}@2x.png`)
+po = `ㅤㅤㅤClima em ${anu.name}
+📄 Resumo : ${anu.weather[0].description}
+🌡️ Temperatura : ${anu.main.temp}°c
+🌡️ Sensação Térmica : ${anu.main.feels_like}°c
+🌡️ Temperatura Min : ${anu.main.temp_min}°c
+🌡️ Temperatura Max : ${anu.main.temp_max}°c
+💧​💨​ Umidadade: ${anu.main.humidity}%
+📊 Pressão Atmosférica: ${anu.main.pressure}hPa 
+💨 Vel. Vento: ${anu.wind.speed}m/s
+🧭💨 Direção do Vento: ${anu.wind.deg}º
+ㅤㅤㅤㅤ🗺️ GEOLOCALIZAÇÃO 🗺️   
+📍Pais: ${anu.sys.country}
+📍CIDADE: ${anu.name}
+📍Cordenadas: ${anu.coord.lon}, ${anu.coord.lat}`
+await conn.sendMessage(from, buffer, image, {quoted: info, thumbnail:buffer, caption: po})
+} catch {
+reply('Não foi possível encontrar a região')
+}
+break;
 			case '!moeda':
 			case '!converter':
 			case '!cot':
